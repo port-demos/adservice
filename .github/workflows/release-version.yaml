@@ -12,6 +12,25 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - uses: port-labs/port-github-action@v1
+      env:
+        SERVICE_NAME: ${{ github.event.client_payload.service_name }}
+      with:
+        clientId: ${{ secrets.CLIENT_ID }}
+        clientSecret: ${{ secrets.CLIENT_SECRET }}
+        baseUrl: https://api.getport.io
+        operation: CREATE_RUN
+        icon: GithubActions
+        blueprint: image
+        action: create_docker_image
+        identifier: release-${{ env.SERVICE_NAME }}
+        properties: |-
+          {
+            "text": "Relase service docker image",
+            "number": 1,
+            "boolean": true
+          }
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -69,9 +88,24 @@ jobs:
         title: ${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
         team: |
           ["SRE"]
-        properties: |
+        properties: |-
             {
               "image_tags":  ${{ env.RELEASE_VERSION }},
-              "registry_id:  ${{ env.REGISTRY_NAME }},
+              "registry_id:  ${{ env.REGISTRY_NAME }}
             }
 
+    - uses: port-labs/port-github-action@v1
+      env:
+        SERVICE_NAME: ${{ github.event.client_payload.service_name }}
+        RELEASE_VERSION: ${{ github.event.client_payload.version }}
+        REGISTRY_NAME: ${{ github.event.client_payload.image_registry }}
+      with:
+        clientId: ${{ secrets.CLIENT_ID }}
+        clientSecret: ${{ secrets.CLIENT_SECRET }}
+        baseUrl: https://api.getport.io
+        operation: PATCH_RUN
+        runId: release-${{ env.SERVICE_NAME }}
+        status: "SUCCESS"
+        logMessage: "Docker image released! ✅"
+        summary: "A new version ${{ env.SERVICE_NAME }} was build and push "
+        link: '["gcr.io/sre-playground-378016/${{ env.REGISTRY_NAME }}/${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}"]'
