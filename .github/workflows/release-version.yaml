@@ -11,10 +11,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Checkout code
-      uses: actions/checkout@v3
-
+      
     - name: Extract vars from payload
       id: vars
       run: |
