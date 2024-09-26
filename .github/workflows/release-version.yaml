@@ -49,4 +49,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: gcr.io/sre-playground-378016/${{ env.REGISTRY_NAME }}/${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
+        tags: ${{ env.REGISTRY_NAME }}-docker.pkg.dev/sre-playground-378016/${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
