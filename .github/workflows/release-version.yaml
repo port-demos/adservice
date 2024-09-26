@@ -19,8 +19,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         RELEASE_VERSION: ${{ github.event.client_payload.version }}
       with:
-        tag_name: v${{ env.RELEASE_VERSION }}
-        release_name: Release v${{ env.RELEASE_VERSION }}
+        tag_name: ${{ env.RELEASE_VERSION }}
+        release_name: Release ${{ env.RELEASE_VERSION }}
         draft: false
         prerelease: false
 
@@ -49,7 +49,8 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ env.REGISTRY_NAME }}-docker.pkg.dev/sre-playground-378016/${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
+        tags: gcr.io/sre-playground-378016/${{ env.REGISTRY_NAME }}/${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
+
 
     - name: Create a docker image entity
       uses: port-labs/port-github-action@v1
@@ -71,6 +72,6 @@ jobs:
         properties: |
             {
               "image_tags":  ${{ env.RELEASE_VERSION }},
-              "registry_id: ${{ env.REGISTRY_NAME }}
+              "registry_id: 
             }
 
