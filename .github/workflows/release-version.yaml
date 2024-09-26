@@ -72,6 +72,6 @@ jobs:
         properties: |
             {
               "image_tags":  ${{ env.RELEASE_VERSION }},
-              "registry_id: 
+              "registry_id:  ${{ env.REGISTRY_NAME }},
             }
 
