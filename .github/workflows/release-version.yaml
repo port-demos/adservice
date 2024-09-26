@@ -50,3 +50,27 @@ jobs:
         context: .
         push: true
         tags: ${{ env.REGISTRY_NAME }}-docker.pkg.dev/sre-playground-378016/${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
+
+    - name: Create a docker image entity
+      uses: port-labs/port-github-action@v1
+      env:
+        SERVICE_NAME: ${{ github.event.client_payload.service_name }}
+        RELEASE_VERSION: ${{ github.event.client_payload.version }}
+        REGISTRY_NAME: ${{ github.event.client_payload.image_registry }}
+      with:
+        clientId: ${{ secrets.PORT_CLIENT_ID }}
+        clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+        baseUrl: https://api.getport.io
+        operation: UPSERT
+        icon: "Docker"
+        blueprint:  image
+        identifier: ${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
+        title: ${{ env.SERVICE_NAME }}:${{ env.RELEASE_VERSION }}
+        team: |
+          ["SRE"]
+        properties: |
+            {
+              "image_tags":  ${{ env.RELEASE_VERSION }},
+              "registry_id: ${{ env.REGISTRY_NAME }}
+            }
+
