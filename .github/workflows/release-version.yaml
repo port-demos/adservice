@@ -12,19 +12,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Extract vars from payload
-      id: extract-vars
-      run: |
-        echo "SERVICE_NAME=${{ github.event.client_payload.service_name }}" >> $GITHUB_ENV
-        echo "RELEASE_VERSION=${{ github.event.client_payload.version }}" >> $GITHUB_ENV
-        echo "IMAGE_REGISTRY=${{ github.event.client_payload.image_registry }}" >> $GITHUB_ENV
-
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        RELEASE_VERSION: steps.extract-vars.outputs.RELEASE_VERSION
+        RELEASE_VERSION: ${{ github.event.client_payload.version }}
       with:
         tag_name: ${{ env.RELEASE_VERSION }}
         release_name: Release ${{ env.RELEASE_VERSION }}
@@ -50,9 +43,9 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       env:
-        SERVICE_NAME: steps.extract-vars.outputs.SERVICE_NAME
-        RELEASE_VERSION: steps.extract-vars.outputs.RELEASE_VERSION
-        REGISTRY_NAME: steps.extract-vars.outputs.REGISTRY_NAME
+        SERVICE_NAME: ${{ github.event.client_payload.service_name }}
+        RELEASE_VERSION: ${{ github.event.client_payload.version }}
+        REGISTRY_NAME: ${{ github.event.client_payload.image_registry }}
       with:
         context: .
         push: true
